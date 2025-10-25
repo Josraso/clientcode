@@ -1,6 +1,6 @@
 # Client Code - Módulo PrestaShop
 
-**Versión:** 1.0.2
+**Versión:** 1.0.3
 **Autor:** Tu Nombre
 **Compatibilidad:** PrestaShop 1.7.0 - 9.99.99
 
@@ -169,6 +169,15 @@ Al desinstalar el módulo:
 - API para sincronización con sistemas externos
 
 ## Changelog
+
+### v1.0.3 (2025-10-25)
+- **ARREGLADO DEFINITIVO**: Búsqueda en grid de clientes ahora funciona correctamente (usando search_criteria)
+- **ARREGLADO DEFINITIVO**: Búsqueda en grid de pedidos ahora funciona correctamente (usando search_criteria)
+- **ARREGLADO DEFINITIVO**: Validación de código duplicado muestra mensaje claro en el formulario (con Symfony Validator)
+- **REDISEÑADO**: Panel en ficha de cliente ahora es una card moderna que aparece arriba (CSS + JS integrado)
+- **REDISEÑADO**: Card en pedido con mejor diseño y JavaScript mejorado para posicionamiento
+- **SIMPLIFICADO**: Código JavaScript ahora está en los templates individuales, no en hookDisplayBackOfficeHeader
+- **MEJORADO**: Labels en español en formulario de cliente
 
 ### v1.0.2 (2025-10-25)
 - **CORREGIDO**: URL de ficha del cliente ahora funciona correctamente
