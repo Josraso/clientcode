@@ -1,9 +1,9 @@
 {*
-* Vista para displayAdminOrderLeft en pedidos
-* /modules/clientcode/views/templates/admin/order_left.tpl
+* Vista para displayAdminOrderTop en pedidos
+* /modules/clientcode/views/templates/admin/order_top.tpl
 *}
 
-<div class="card client-code-order-left-card">
+<div class="card client-code-order-top-card">
     <div class="card-header">
         <h3 class="card-header-title">
             <i class="material-icons">badge</i>
@@ -44,17 +44,17 @@
 </div>
 
 <style>
-.client-code-order-left-card {
+.client-code-order-top-card {
     margin-bottom: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.client-code-order-left-card .card-header {
+.client-code-order-top-card .card-header {
     background-color: #f8f9fa;
     border-bottom: 2px solid #2196F3;
 }
 
-.client-code-order-left-card .card-header-title {
+.client-code-order-top-card .card-header-title {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -63,7 +63,7 @@
     font-weight: 600;
 }
 
-.client-code-order-left-card .material-icons {
+.client-code-order-top-card .material-icons {
     font-size: 20px;
 }
 </style>

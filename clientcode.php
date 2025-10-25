@@ -17,7 +17,7 @@ class ClientCode extends Module
     {
         $this->name = 'clientcode';
         $this->tab = 'administration';
-        $this->version = '1.0.4';
+        $this->version = '1.0.5';
         $this->author = 'Tu Nombre';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = [
@@ -43,8 +43,8 @@ class ClientCode extends Module
             && $this->registerHook('actionObjectCustomerAddAfter')
             && $this->registerHook('actionCustomerGridDefinitionModifier')
             && $this->registerHook('actionCustomerGridQueryBuilderModifier')
-            && $this->registerHook('displayAdminOrderLeft')
-            && $this->registerHook('displayAdminCustomers')
+            && $this->registerHook('displayAdminOrderTop')
+            && $this->registerHook('displayAdminCustomersForm')
             && $this->registerHook('actionOrderGridDefinitionModifier')
             && $this->registerHook('actionOrderGridQueryBuilderModifier')
             && $this->registerHook('displayBackOfficeHeader');
@@ -194,33 +194,44 @@ class ClientCode extends Module
     protected function generateClientCode()
     {
         $prefix = 'CLI-';
-        $prefixLength = strlen($prefix) + 1;
 
+        // Obtener todos los códigos que empiezan con el prefijo
         $sql = 'SELECT client_code FROM `' . _DB_PREFIX_ . 'customer`
-                WHERE client_code LIKE "' . pSQL($prefix) . '%"
-                AND client_code REGEXP "^' . pSQL($prefix) . '[0-9]+$"
-                ORDER BY CAST(SUBSTRING(client_code, ' . (int)$prefixLength . ') AS UNSIGNED) DESC
-                LIMIT 1';
+                WHERE client_code LIKE "CLI-%"
+                ORDER BY client_code DESC';
 
-        $lastCode = Db::getInstance()->getValue($sql);
+        $codes = Db::getInstance()->executeS($sql);
 
-        if ($lastCode) {
-            $number = (int)str_replace($prefix, '', $lastCode);
-            $newNumber = $number + 1;
-        } else {
-            $newNumber = 1;
+        $maxNumber = 0;
+
+        if ($codes && is_array($codes)) {
+            foreach ($codes as $row) {
+                $code = $row['client_code'];
+                // Extraer el número del código (ej: CLI-0001 -> 1)
+                $numPart = str_replace($prefix, '', $code);
+                // Solo considerar si es numérico
+                if (is_numeric($numPart)) {
+                    $num = (int)$numPart;
+                    if ($num > $maxNumber) {
+                        $maxNumber = $num;
+                    }
+                }
+            }
         }
 
+        $newNumber = $maxNumber + 1;
         $newCode = $prefix . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
 
-        // Verificar que no exista (recursión si existe)
+        // Verificar que no exista (por si acaso)
         $exists = Db::getInstance()->getValue(
             'SELECT id_customer FROM `' . _DB_PREFIX_ . 'customer`
              WHERE client_code = "' . pSQL($newCode) . '"'
         );
 
         if ($exists) {
-            return $this->generateClientCode();
+            // Si existe, probar con el siguiente número
+            $newNumber++;
+            $newCode = $prefix . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
         }
 
         return $newCode;
@@ -290,7 +301,7 @@ class ClientCode extends Module
         }
     }
 
-    public function hookDisplayAdminOrderLeft($params)
+    public function hookDisplayAdminOrderTop($params)
     {
         $orderId = $params['id_order'];
         $order = new Order($orderId);
@@ -305,12 +316,12 @@ class ClientCode extends Module
             'customer_id' => $customer->id,
         ]);
 
-        return $this->display(__FILE__, 'views/templates/admin/order_left.tpl');
+        return $this->display(__FILE__, 'views/templates/admin/order_top.tpl');
     }
 
-    public function hookDisplayAdminCustomers($params)
+    public function hookDisplayAdminCustomersForm($params)
     {
-        $customerId = Tools::getValue('id_customer');
+        $customerId = isset($params['id']) ? (int)$params['id'] : Tools::getValue('id_customer');
 
         if (!$customerId) {
             return '';
@@ -324,7 +335,7 @@ class ClientCode extends Module
             'sales_agent' => $salesAgent,
         ]);
 
-        return $this->display(__FILE__, 'views/templates/admin/customer_info.tpl');
+        return $this->display(__FILE__, 'views/templates/admin/customer_form.tpl');
     }
 
     public function hookActionOrderGridDefinitionModifier(array $params)

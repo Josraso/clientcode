@@ -1,6 +1,6 @@
 # Client Code - Módulo PrestaShop
 
-**Versión:** 1.0.4
+**Versión:** 1.0.5
 **Autor:** Tu Nombre
 **Compatibilidad:** PrestaShop 1.7.0 - 9.99.99
 
@@ -169,6 +169,14 @@ Al desinstalar el módulo:
 - API para sincronización con sistemas externos
 
 ## Changelog
+
+### v1.0.5 (2025-10-25)
+- **CAMBIADO HOOK PEDIDOS**: Ahora usa displayAdminOrderTop (aparece arriba naturalmente)
+- **CAMBIADO HOOK CLIENTES**: Ahora usa displayAdminCustomersForm (aparece en formulario)
+- **ARREGLADO SQL DEFINITIVO**: Simplificado generateClientCode() sin REGEXP ni SUBSTRING
+- **NUEVO MÉTODO**: Obtiene todos los códigos y busca el máximo en PHP (más seguro)
+- **SIN JAVASCRIPT**: Templates simples sin movimientos ni posicionamiento
+- **LIMPIADO**: Eliminados customer_info.tpl y templates con JS innecesario
 
 ### v1.0.4 (2025-10-25)
 - **ARREGLADO CRÍTICO**: Error SQL al generar código automático cuando se deja vacío (SQLSTATE[42000])
