@@ -1,6 +1,6 @@
 # Client Code - Módulo PrestaShop
 
-**Versión:** 1.0.3
+**Versión:** 1.0.4
 **Autor:** Tu Nombre
 **Compatibilidad:** PrestaShop 1.7.0 - 9.99.99
 
@@ -169,6 +169,14 @@ Al desinstalar el módulo:
 - API para sincronización con sistemas externos
 
 ## Changelog
+
+### v1.0.4 (2025-10-25)
+- **ARREGLADO CRÍTICO**: Error SQL al generar código automático cuando se deja vacío (SQLSTATE[42000])
+- **CAMBIADO**: Hook de pedidos ahora usa SOLO displayAdminOrderLeft (eliminado displayAdminOrder)
+- **NUEVO**: Template order_left.tpl específico para displayAdminOrderLeft sin JavaScript innecesario
+- **MEJORADO**: JavaScript ultra-agresivo en customer_info.tpl con 6 intentos para mover arriba
+- **MEJORADO**: Múltiples selectores CSS para encontrar contenedor principal en ficha de cliente
+- **LIMPIADO**: Eliminado hookDisplayAdminOrder y templates innecesarios
 
 ### v1.0.3 (2025-10-25)
 - **ARREGLADO DEFINITIVO**: Búsqueda en grid de clientes ahora funciona correctamente (usando search_criteria)

@@ -17,7 +17,7 @@ class ClientCode extends Module
     {
         $this->name = 'clientcode';
         $this->tab = 'administration';
-        $this->version = '1.0.3';
+        $this->version = '1.0.4';
         $this->author = 'Tu Nombre';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = [
@@ -47,8 +47,7 @@ class ClientCode extends Module
             && $this->registerHook('displayAdminCustomers')
             && $this->registerHook('actionOrderGridDefinitionModifier')
             && $this->registerHook('actionOrderGridQueryBuilderModifier')
-            && $this->registerHook('displayBackOfficeHeader')
-            && $this->registerHook('displayAdminOrder');
+            && $this->registerHook('displayBackOfficeHeader');
     }
 
     public function uninstall()
@@ -195,15 +194,16 @@ class ClientCode extends Module
     protected function generateClientCode()
     {
         $prefix = 'CLI-';
-        
-        $sql = 'SELECT client_code FROM `' . _DB_PREFIX_ . 'customer` 
-                WHERE client_code LIKE "' . pSQL($prefix) . '%" 
+        $prefixLength = strlen($prefix) + 1;
+
+        $sql = 'SELECT client_code FROM `' . _DB_PREFIX_ . 'customer`
+                WHERE client_code LIKE "' . pSQL($prefix) . '%"
                 AND client_code REGEXP "^' . pSQL($prefix) . '[0-9]+$"
-                ORDER BY CAST(SUBSTRING(client_code, ' . (strlen($prefix) + 1) . ') AS UNSIGNED) DESC 
+                ORDER BY CAST(SUBSTRING(client_code, ' . (int)$prefixLength . ') AS UNSIGNED) DESC
                 LIMIT 1';
-        
+
         $lastCode = Db::getInstance()->getValue($sql);
-        
+
         if ($lastCode) {
             $number = (int)str_replace($prefix, '', $lastCode);
             $newNumber = $number + 1;
@@ -212,16 +212,17 @@ class ClientCode extends Module
         }
 
         $newCode = $prefix . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
-        
+
+        // Verificar que no exista (recursión si existe)
         $exists = Db::getInstance()->getValue(
-            'SELECT id_customer FROM `' . _DB_PREFIX_ . 'customer` 
+            'SELECT id_customer FROM `' . _DB_PREFIX_ . 'customer`
              WHERE client_code = "' . pSQL($newCode) . '"'
         );
-        
+
         if ($exists) {
             return $this->generateClientCode();
         }
-        
+
         return $newCode;
     }
 
@@ -294,17 +295,17 @@ class ClientCode extends Module
         $orderId = $params['id_order'];
         $order = new Order($orderId);
         $customer = new Customer($order->id_customer);
-        
+
         $clientCode = $this->getClientCode($customer->id);
         $salesAgent = $this->getSalesAgent($customer->id);
-        
+
         $this->context->smarty->assign([
-            'client_code' => $clientCode ? $clientCode : $this->l('Not assigned'),
+            'client_code' => $clientCode ? $clientCode : $this->l('Sin asignar'),
             'sales_agent' => $salesAgent,
             'customer_id' => $customer->id,
         ]);
 
-        return $this->display(__FILE__, 'views/templates/admin/order_detail.tpl');
+        return $this->display(__FILE__, 'views/templates/admin/order_left.tpl');
     }
 
     public function hookDisplayAdminCustomers($params)
@@ -385,24 +386,5 @@ class ClientCode extends Module
     {
         // Cargar CSS del módulo
         $this->context->controller->addCSS($this->_path . 'views/css/clientcode.css');
-    }
-
-    public function hookDisplayAdminOrder($params)
-    {
-        $orderId = $params['id_order'];
-        $order = new Order($orderId);
-        $customer = new Customer($order->id_customer);
-
-        $clientCode = $this->getClientCode($customer->id);
-        $salesAgent = $this->getSalesAgent($customer->id);
-
-        $this->context->smarty->assign([
-            'client_code' => $clientCode ? $clientCode : $this->l('Not assigned'),
-            'sales_agent' => $salesAgent,
-            'customer_id' => $customer->id,
-            'customer_email' => $customer->email,
-        ]);
-
-        return $this->display(__FILE__, 'views/templates/admin/order_customer_info.tpl');
     }
 }
