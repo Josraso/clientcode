@@ -3,66 +3,41 @@
 * /modules/clientcode/views/templates/admin/customer_form.tpl
 *}
 
-<div class="card client-code-customer-form-card">
-    <div class="card-header">
-        <h3 class="card-header-title">
-            <i class="material-icons">badge</i>
-            Código de Cliente
-        </h3>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label class="form-control-label"><strong>Código:</strong></label>
-                    <div>
-                        {if $client_code}
-                            <span class="badge badge-primary" style="font-size: 16px; padding: 8px 16px; background-color: #2196F3; color: white;">
-                                {$client_code|escape:'htmlall':'UTF-8'}
-                            </span>
-                        {else}
-                            <em class="text-muted">Se generará automáticamente</em>
-                        {/if}
-                    </div>
-                </div>
-            </div>
-
-            {if $sales_agent}
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label class="form-control-label"><strong>Comercial:</strong></label>
-                    <div>
-                        <span class="text-dark">{$sales_agent|escape:'htmlall':'UTF-8'}</span>
-                    </div>
-                </div>
-            </div>
+<div class="alert alert-info client-code-customer-compact" style="margin: 15px 0;">
+    <div class="row align-items-center">
+        <div class="col-auto">
+            <i class="material-icons" style="vertical-align: middle; margin-right: 5px;">badge</i>
+            <strong>Código de Cliente:</strong>
+            {if $client_code}
+                <span class="badge badge-primary" style="font-size: 14px; padding: 6px 12px; background-color: #2196F3; color: white; margin-left: 5px;">
+                    {$client_code|escape:'htmlall':'UTF-8'}
+                </span>
+            {else}
+                <em class="text-muted" style="margin-left: 5px;">Se generará automáticamente</em>
             {/if}
         </div>
+
+        {if $sales_agent}
+        <div class="col-auto">
+            <strong>Comercial:</strong>
+            <span style="margin-left: 5px;">{$sales_agent|escape:'htmlall':'UTF-8'}</span>
+        </div>
+        {/if}
     </div>
 </div>
 
 <style>
-.client-code-customer-form-card {
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border: 1px solid #dee2e6;
+.client-code-customer-compact {
+    padding: 12px 15px;
+    border-left: 4px solid #2196F3;
+    background-color: #e3f2fd !important;
 }
 
-.client-code-customer-form-card .card-header {
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #2196F3;
-}
-
-.client-code-customer-form-card .card-header-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 16px;
-    font-weight: 600;
+.client-code-customer-compact .row {
     margin: 0;
 }
 
-.client-code-customer-form-card .material-icons {
-    font-size: 20px;
+.client-code-customer-compact .col-auto {
+    padding: 0 10px;
 }
 </style>

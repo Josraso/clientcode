@@ -1,6 +1,6 @@
 # Client Code - Módulo PrestaShop
 
-**Versión:** 1.0.5
+**Versión:** 1.0.6
 **Autor:** Tu Nombre
 **Compatibilidad:** PrestaShop 1.7.0 - 9.99.99
 
@@ -169,6 +169,13 @@ Al desinstalar el módulo:
 - API para sincronización con sistemas externos
 
 ## Changelog
+
+### v1.0.6 (2025-10-25)
+- **OPTIMIZADO**: Layout de pedido en UNA SOLA LÍNEA (código + comercial + botón)
+- **OPTIMIZADO**: Layout de cliente en UNA SOLA LÍNEA (código + comercial)
+- **CAMBIADO**: Templates usan alert compacto en lugar de card (ocupan menos espacio)
+- **MEJORADO**: Diseño más limpio y profesional con borde azul lateral
+- **REDUCIDO**: Altura de los elementos para optimizar espacio vertical
 
 ### v1.0.5 (2025-10-25)
 - **CAMBIADO HOOK PEDIDOS**: Ahora usa displayAdminOrderTop (aparece arriba naturalmente)

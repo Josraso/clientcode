@@ -17,7 +17,7 @@ class ClientCode extends Module
     {
         $this->name = 'clientcode';
         $this->tab = 'administration';
-        $this->version = '1.0.5';
+        $this->version = '1.0.6';
         $this->author = 'Tu Nombre';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = [
