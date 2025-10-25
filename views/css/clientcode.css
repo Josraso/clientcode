@@ -1,0 +1,86 @@
+/**
+ * Client Code Module - Estilos
+ * /modules/clientcode/views/css/clientcode.css
+ */
+
+/* Estilos generales para badges de código */
+.badge.badge-info.client-code {
+    font-size: 14px;
+    padding: 6px 12px;
+    background-color: #2196F3;
+    color: white;
+    font-weight: 600;
+    border-radius: 4px;
+}
+
+/* Panel de información del cliente */
+.panel.client-code-panel {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.panel.client-code-panel .panel-heading {
+    background-color: #e3f2fd;
+    border-bottom: 2px solid #2196F3;
+    font-weight: 600;
+    padding: 12px 15px;
+}
+
+/* Card para pedidos */
+.card.client-code-card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.card.client-code-card .card-header {
+    background-color: #f5f5f5;
+    border-bottom: 2px solid #2196F3;
+}
+
+.card.client-code-card .card-header-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Columna de código en grids */
+.table td.column-client_code,
+.table th.column-client_code {
+    text-align: center;
+    font-weight: 500;
+}
+
+.table td.column-client_code .badge {
+    font-size: 12px;
+    padding: 4px 8px;
+}
+
+/* Resaltar código en búsquedas */
+.client-code-highlight {
+    background: #fff3cd;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: 600;
+}
+
+/* Mejoras para formularios */
+.form-control-label strong {
+    color: #333;
+}
+
+/* Estilos responsive */
+@media (max-width: 768px) {
+    .badge.badge-info.client-code {
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+
+    .card.client-code-card .card-header-title {
+        font-size: 14px;
+    }
+}

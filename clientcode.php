@@ -44,7 +44,11 @@ class ClientCode extends Module
             && $this->registerHook('actionCustomerGridDefinitionModifier')
             && $this->registerHook('actionCustomerGridQueryBuilderModifier')
             && $this->registerHook('displayAdminOrderLeft')
-            && $this->registerHook('displayAdminCustomers');
+            && $this->registerHook('displayAdminCustomers')
+            && $this->registerHook('actionOrderGridDefinitionModifier')
+            && $this->registerHook('actionOrderGridQueryBuilderModifier')
+            && $this->registerHook('displayBackOfficeHeader')
+            && $this->registerHook('displayAdminOrder');
     }
 
     public function uninstall()
@@ -163,7 +167,7 @@ class ClientCode extends Module
 
         $salesAgent = isset($formData['sales_agent']) ? trim($formData['sales_agent']) : '';
 
-        // Verificar si el c�digo ya existe para otro cliente
+        // Verificar si el código ya existe para otro cliente
         $existingId = Db::getInstance()->getValue(
             'SELECT id_customer FROM `' . _DB_PREFIX_ . 'customer` 
              WHERE client_code = "' . pSQL($clientCode) . '" 
@@ -283,7 +287,7 @@ class ClientCode extends Module
     public function hookDisplayAdminCustomers($params)
     {
         $customerId = Tools::getValue('id_customer');
-        
+
         if (!$customerId) {
             return '';
         }
@@ -297,5 +301,114 @@ class ClientCode extends Module
         ]);
 
         return $this->display(__FILE__, 'views/templates/admin/customer_info.tpl');
+    }
+
+    public function hookActionOrderGridDefinitionModifier(array $params)
+    {
+        $definition = $params['definition'];
+
+        $column = new PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\DataColumn('client_code');
+        $column->setName($this->l('Client Code'))
+            ->setOptions([
+                'field' => 'client_code',
+            ]);
+
+        $definition->getColumns()->addAfter('id_customer', $column);
+
+        $filters = $definition->getFilters();
+        $filters->add(
+            (new PrestaShop\PrestaShop\Core\Grid\Filter\Filter('client_code', Symfony\Component\Form\Extension\Core\Type\TextType::class))
+                ->setTypeOptions([
+                    'required' => false,
+                    'attr' => [
+                        'placeholder' => $this->l('Search code'),
+                    ],
+                ])
+                ->setAssociatedColumn('client_code')
+        );
+    }
+
+    public function hookActionOrderGridQueryBuilderModifier(array $params)
+    {
+        $searchQueryBuilder = $params['search_query_builder'];
+
+        $searchQueryBuilder->leftJoin(
+            'o',
+            _DB_PREFIX_ . 'customer',
+            'cust',
+            'o.id_customer = cust.id_customer'
+        );
+
+        $searchQueryBuilder->addSelect('cust.client_code');
+
+        if (isset($params['filters']['client_code']) && !empty($params['filters']['client_code'])) {
+            $searchQueryBuilder->andWhere('cust.client_code LIKE :client_code');
+            $searchQueryBuilder->setParameter('client_code', '%' . $params['filters']['client_code'] . '%');
+        }
+    }
+
+    public function hookDisplayBackOfficeHeader()
+    {
+        $controller = $this->context->controller;
+        $controllerName = get_class($controller);
+
+        // Cargar CSS del módulo
+        $this->context->controller->addCSS($this->_path . 'views/css/clientcode.css');
+
+        $output = '';
+
+        // JS para mejorar la visualización en ficha de cliente
+        if (strpos($controllerName, 'AdminCustomers') !== false) {
+            $output .= '
+            <script>
+                // Mover el código de cliente a la zona de información principal
+                document.addEventListener("DOMContentLoaded", function() {
+                    setTimeout(function() {
+                        var clientInfoPanel = document.querySelector(".panel");
+                        if (clientInfoPanel && clientInfoPanel.textContent.indexOf("Código de Cliente") > -1) {
+                            var customerInfo = document.querySelector(".customer-info, .form-wrapper");
+                            if (customerInfo) {
+                                customerInfo.insertBefore(clientInfoPanel, customerInfo.firstChild);
+                            }
+                        }
+                    }, 500);
+                });
+            </script>';
+        }
+
+        // JS para mejorar búsqueda global por código
+        if (strpos($controllerName, 'Admin') !== false) {
+            $output .= '
+            <script>
+                // Mejorar búsqueda global para incluir código de cliente
+                document.addEventListener("DOMContentLoaded", function() {
+                    var searchInput = document.querySelector("#bo_query, input[name=\\"bo_query\\"]");
+                    if (searchInput) {
+                        searchInput.setAttribute("placeholder", "Buscar clientes por nombre, email o código...");
+                    }
+                });
+            </script>';
+        }
+
+        return $output;
+    }
+
+    public function hookDisplayAdminOrder($params)
+    {
+        $orderId = $params['id_order'];
+        $order = new Order($orderId);
+        $customer = new Customer($order->id_customer);
+
+        $clientCode = $this->getClientCode($customer->id);
+        $salesAgent = $this->getSalesAgent($customer->id);
+
+        $this->context->smarty->assign([
+            'client_code' => $clientCode ? $clientCode : $this->l('Not assigned'),
+            'sales_agent' => $salesAgent,
+            'customer_id' => $customer->id,
+            'customer_email' => $customer->email,
+        ]);
+
+        return $this->display(__FILE__, 'views/templates/admin/order_customer_info.tpl');
     }
 }

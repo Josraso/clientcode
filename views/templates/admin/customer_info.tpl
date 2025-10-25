@@ -6,24 +6,24 @@
 <div class="panel">
     <div class="panel-heading">
         <i class="icon-info-circle"></i>
-        InformaciÛn Adicional
+        Informaci√≥n Adicional del Cliente
     </div>
     <div class="panel-body">
         <div class="form-group">
-            <label class="col-lg-3 control-label">CÛdigo de Cliente:</label>
+            <label class="col-lg-3 control-label"><strong>C√≥digo de Cliente:</strong></label>
             <div class="col-lg-9">
                 <p class="form-control-static">
                     {if $client_code}
-                        <span class="badge badge-info">{$client_code|escape:'htmlall':'UTF-8'}</span>
+                        <span class="badge badge-info" style="font-size: 14px; padding: 6px 12px;">{$client_code|escape:'htmlall':'UTF-8'}</span>
                     {else}
-                        <em class="text-muted">Se generar· autom·ticamente</em>
+                        <em class="text-muted">Se generar√° autom√°ticamente</em>
                     {/if}
                 </p>
             </div>
         </div>
         {if $sales_agent}
         <div class="form-group">
-            <label class="col-lg-3 control-label">Comercial:</label>
+            <label class="col-lg-3 control-label"><strong>Comercial:</strong></label>
             <div class="col-lg-9">
                 <p class="form-control-static">{$sales_agent|escape:'htmlall':'UTF-8'}</p>
             </div>
@@ -31,3 +31,10 @@
         {/if}
     </div>
 </div>
+
+<style>
+.panel-heading {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+</style>
