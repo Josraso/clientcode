@@ -1,6 +1,6 @@
 # Client Code - Módulo PrestaShop
 
-**Versión:** 1.0.1
+**Versión:** 1.0.2
 **Autor:** Tu Nombre
 **Compatibilidad:** PrestaShop 1.7.0 - 9.99.99
 
@@ -169,6 +169,15 @@ Al desinstalar el módulo:
 - API para sincronización con sistemas externos
 
 ## Changelog
+
+### v1.0.2 (2025-10-25)
+- **CORREGIDO**: URL de ficha del cliente ahora funciona correctamente
+- **CORREGIDO**: Error "Column with id 'id_customer' was not found" en listado de pedidos
+- **CORREGIDO**: Búsqueda por código en grid de clientes ahora funciona correctamente
+- **MEJORADO**: Manejo de errores amigable para códigos duplicados (muestra advertencia en lugar de error SQL)
+- **MEJORADO**: JavaScript mejorado para posicionar panel de código en ficha de cliente
+- **MEJORADO**: JavaScript para mover card de información en pedido (entre "Pedido" y "Mensaje")
+- **ELIMINADO**: Código de búsqueda global que no funcionaba desde módulo
 
 ### v1.0.1 (2025-10-25)
 - Corrección de codificación UTF-8 en templates

@@ -37,7 +37,7 @@
 
         <div class="row mt-3">
             <div class="col-md-12">
-                <a href="{$link->getAdminLink('AdminCustomers')|escape:'html':'UTF-8'}&id_customer={$customer_id|intval}&viewcustomer"
+                <a href="{$link->getAdminLink('AdminCustomers', true, [], ['id_customer' => $customer_id|intval, 'viewcustomer' => 1])|escape:'html':'UTF-8'}"
                    class="btn btn-sm btn-outline-secondary" target="_blank">
                     <i class="material-icons">visibility</i>
                     Ver Ficha del Cliente
