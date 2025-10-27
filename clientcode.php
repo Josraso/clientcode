@@ -17,7 +17,7 @@ class ClientCode extends Module
     {
         $this->name = 'clientcode';
         $this->tab = 'administration';
-        $this->version = '1.0.6';
+        $this->version = '1.0.7';
         $this->author = 'Tu Nombre';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = [
@@ -44,10 +44,11 @@ class ClientCode extends Module
             && $this->registerHook('actionCustomerGridDefinitionModifier')
             && $this->registerHook('actionCustomerGridQueryBuilderModifier')
             && $this->registerHook('displayAdminOrderTop')
-            && $this->registerHook('displayAdminCustomersForm')
+            && $this->registerHook('displayAdminCustomers')
             && $this->registerHook('actionOrderGridDefinitionModifier')
             && $this->registerHook('actionOrderGridQueryBuilderModifier')
-            && $this->registerHook('displayBackOfficeHeader');
+            && $this->registerHook('displayBackOfficeHeader')
+            && $this->registerHook('actionValidateOrder');
     }
 
     public function uninstall()
@@ -58,15 +59,20 @@ class ClientCode extends Module
     protected function installDb()
     {
         $sql = [];
-        
-        $sql[] = 'ALTER TABLE `' . _DB_PREFIX_ . 'customer` 
+
+        // Campos en tabla customer
+        $sql[] = 'ALTER TABLE `' . _DB_PREFIX_ . 'customer`
                   ADD `client_code` VARCHAR(50) NULL DEFAULT NULL';
-        
-        $sql[] = 'ALTER TABLE `' . _DB_PREFIX_ . 'customer` 
+
+        $sql[] = 'ALTER TABLE `' . _DB_PREFIX_ . 'customer`
                   ADD `sales_agent` VARCHAR(255) NULL DEFAULT NULL';
 
-        $sql[] = 'ALTER TABLE `' . _DB_PREFIX_ . 'customer` 
+        $sql[] = 'ALTER TABLE `' . _DB_PREFIX_ . 'customer`
                   ADD UNIQUE KEY `unique_client_code` (`client_code`)';
+
+        // Campo en tabla orders para exportación
+        $sql[] = 'ALTER TABLE `' . _DB_PREFIX_ . 'orders`
+                  ADD `client_code` VARCHAR(50) NULL DEFAULT NULL';
 
         foreach ($sql as $query) {
             try {
@@ -82,10 +88,11 @@ class ClientCode extends Module
     protected function uninstallDb()
     {
         $sql = [];
-        
+
         $sql[] = 'ALTER TABLE `' . _DB_PREFIX_ . 'customer` DROP INDEX `unique_client_code`';
         $sql[] = 'ALTER TABLE `' . _DB_PREFIX_ . 'customer` DROP `client_code`';
         $sql[] = 'ALTER TABLE `' . _DB_PREFIX_ . 'customer` DROP `sales_agent`';
+        $sql[] = 'ALTER TABLE `' . _DB_PREFIX_ . 'orders` DROP `client_code`';
 
         foreach ($sql as $query) {
             try {
@@ -319,9 +326,9 @@ class ClientCode extends Module
         return $this->display(__FILE__, 'views/templates/admin/order_top.tpl');
     }
 
-    public function hookDisplayAdminCustomersForm($params)
+    public function hookDisplayAdminCustomers($params)
     {
-        $customerId = isset($params['id']) ? (int)$params['id'] : Tools::getValue('id_customer');
+        $customerId = Tools::getValue('id_customer');
 
         if (!$customerId) {
             return '';
@@ -336,6 +343,25 @@ class ClientCode extends Module
         ]);
 
         return $this->display(__FILE__, 'views/templates/admin/customer_form.tpl');
+    }
+
+    public function hookActionValidateOrder($params)
+    {
+        // Copiar código de cliente al pedido cuando se crea
+        $orderId = isset($params['order']->id) ? (int)$params['order']->id : 0;
+        $customerId = isset($params['customer']->id) ? (int)$params['customer']->id : 0;
+
+        if (!$orderId || !$customerId) {
+            return;
+        }
+
+        $clientCode = $this->getClientCode($customerId);
+
+        if ($clientCode) {
+            Db::getInstance()->update('orders', [
+                'client_code' => pSQL($clientCode),
+            ], 'id_order = ' . (int)$orderId);
+        }
     }
 
     public function hookActionOrderGridDefinitionModifier(array $params)

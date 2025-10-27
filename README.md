@@ -1,6 +1,6 @@
 # Client Code - Módulo PrestaShop
 
-**Versión:** 1.0.6
+**Versión:** 1.0.7
 **Autor:** Tu Nombre
 **Compatibilidad:** PrestaShop 1.7.0 - 9.99.99
 
@@ -169,6 +169,13 @@ Al desinstalar el módulo:
 - API para sincronización con sistemas externos
 
 ## Changelog
+
+### v1.0.7 (2025-10-25)
+- **ARREGLADO**: Hook de cliente cambiado a displayAdminCustomers (ahora SÍ se ve)
+- **NUEVO CAMPO**: Añadida columna client_code a tabla ps_orders
+- **AUTOMÁTICO**: Código de cliente se copia al pedido al crearse (actionValidateOrder)
+- **EXPORTACIÓN**: Al exportar pedidos, el código de cliente aparecerá en la columna
+- **BASE DE DATOS**: Modificado installDb() y uninstallDb() para tabla orders
 
 ### v1.0.6 (2025-10-25)
 - **OPTIMIZADO**: Layout de pedido en UNA SOLA LÍNEA (código + comercial + botón)
